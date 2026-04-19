@@ -1,0 +1,43 @@
+services:
+  # ── FastAPI AI Pipeline ───────────────────────────────────────────────
+  - type: web
+    name: curalink-fastapi
+    runtime: python
+    rootDir: server
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: LANGSMITH_API_KEY
+        sync: false
+      - key: LANGSMITH_PROJECT
+        value: curalink
+      - key: LANGCHAIN_TRACING_V2
+        value: "true"
+      - key: PUBMED_API_KEY
+        sync: false
+
+  # ── Express MERN Gateway + React ─────────────────────────────────────
+  - type: web
+    name: curalink-express
+    runtime: node
+    rootDir: .
+    buildCommand: |
+      cd client && npm install && npm run build &&
+      cd ../express-server && npm install
+    startCommand: cd express-server && node index.js
+    envVars:
+      - key: EXPRESS_PORT
+        value: "5000"
+      - key: FASTAPI_URL
+        fromService:
+          name: curalink-fastapi
+          type: web
+          property: host
+      - key: MONGODB_URI
+        sync: false
+      - key: NODE_ENV
+        value: production

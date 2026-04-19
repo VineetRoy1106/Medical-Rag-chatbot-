@@ -1,0 +1,23 @@
+# Python
+server/.venv/
+server/__pycache__/
+server/**/__pycache__/
+server/**/*.pyc
+*.pyc
+*.pyo
+
+# Node
+express-server/node_modules/
+client/node_modules/
+client/build/
+
+# Environment
+.env
+*.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sentence transformer model cache
+~/.cache/
